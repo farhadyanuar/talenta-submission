@@ -1,4 +1,3 @@
-// api/index.js
 const express = require("express");
 const bodyParser = require("body-parser");
 const { bulkSubmit } = require("../src/talentaService");
@@ -23,14 +22,9 @@ app.post("/timesheet", async (req, res) => {
     } = req.body;
 
     const cookie = req.headers["cookie"];
-    if (!cookie) {
-      return res.status(400).json({ error: "Missing Cookie in headers" });
-    }
-    if (!fromDate || !toDate) {
-      return res
-        .status(400)
-        .json({ error: "fromDate and toDate are required" });
-    }
+    if (!cookie) return res.status(400).json({ error: "Missing Cookie" });
+    if (!fromDate || !toDate)
+      return res.status(400).json({ error: "fromDate and toDate required" });
 
     const results = await bulkSubmit({
       fromDate,
@@ -45,9 +39,10 @@ app.post("/timesheet", async (req, res) => {
 
     res.json({ success: true, results });
   } catch (err) {
-    console.error("Error in /timesheet:", err);
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
 
-module.exports = app; // important for Vercel
+// ✅ Important: Vercel expects a handler, not app itself
+module.exports = (req, res) => app(req, res);

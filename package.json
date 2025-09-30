@@ -2,7 +2,8 @@
   "dependencies": {
     "axios": "^1.12.2",
     "dayjs": "^1.11.18",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "serverless-http": "^4.0.0"
   },
   "name": "talenta-submission",
   "version": "1.0.0",
@@ -13,7 +14,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "vercel-build": "echo 'Vercel Build Complete'"
   },
   "keywords": [],
   "author": "",

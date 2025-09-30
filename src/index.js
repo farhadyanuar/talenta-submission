@@ -1,9 +1,14 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const { bulkSubmit } = require("./talentaService");
+const serverless = require("serverless-http");
+const { bulkSubmit } = require("../talentaService");
 
 const app = express();
 app.use(bodyParser.json());
+
+app.get("/", (req, res) => {
+  res.send("Hello from Express on Vercel 🚀");
+});
 
 app.post("/timesheet", async (req, res) => {
   try {
@@ -46,5 +51,6 @@ app.post("/timesheet", async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+// Export handler for Vercel
+module.exports = app;
+module.exports.handler = serverless(app);

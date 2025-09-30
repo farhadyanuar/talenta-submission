@@ -1,13 +1,13 @@
+// api/index.js
 const express = require("express");
 const bodyParser = require("body-parser");
-const serverless = require("serverless-http");
-const { bulkSubmit } = require("../talentaService");
+const { bulkSubmit } = require("../src/talentaService");
 
 const app = express();
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
-  res.send("Hello from Express on Vercel 🚀");
+  res.send("Hello from Talenta Submission 🚀");
 });
 
 app.post("/timesheet", async (req, res) => {
@@ -21,8 +21,8 @@ app.post("/timesheet", async (req, res) => {
       holidays,
       annualLeave,
     } = req.body;
-    const cookie = req.headers["cookie"]; // take from request header
 
+    const cookie = req.headers["cookie"]; // required for Talenta API
     if (!cookie) {
       return res.status(400).json({ error: "Missing Cookie in headers" });
     }
@@ -44,13 +44,12 @@ app.post("/timesheet", async (req, res) => {
       cookie,
     });
 
-    res.json({ results });
+    res.json({ success: true, results });
   } catch (err) {
-    console.error(err);
+    console.error("Error in /timesheet:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
 // Export handler for Vercel
 module.exports = app;
-module.exports.handler = serverless(app);

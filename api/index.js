@@ -1,3 +1,4 @@
+// api/index.js
 const express = require("express");
 const bodyParser = require("body-parser");
 const { bulkSubmit } = require("../src/talentaService");
@@ -6,7 +7,7 @@ const app = express();
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
-  res.send("Hello from Talenta Submission 🚀");
+  res.json({ message: "Hello from Talenta Submission API 🚀" });
 });
 
 app.post("/timesheet", async (req, res) => {
@@ -22,9 +23,12 @@ app.post("/timesheet", async (req, res) => {
     } = req.body;
 
     const cookie = req.headers["cookie"];
-    if (!cookie) return res.status(400).json({ error: "Missing Cookie" });
+    if (!cookie)
+      return res.status(400).json({ error: "Missing Cookie header" });
     if (!fromDate || !toDate)
-      return res.status(400).json({ error: "fromDate and toDate required" });
+      return res
+        .status(400)
+        .json({ error: "fromDate and toDate are required" });
 
     const results = await bulkSubmit({
       fromDate,
@@ -44,5 +48,7 @@ app.post("/timesheet", async (req, res) => {
   }
 });
 
-// ✅ For Vercel, wrap express into a handler
-module.exports = (req, res) => app(req, res);
+// 🔑 Export Express app as a Vercel serverless handler
+module.exports = (req, res) => {
+  app(req, res);
+};

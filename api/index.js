@@ -1,4 +1,3 @@
-// api/index.js
 const express = require("express");
 const bodyParser = require("body-parser");
 const { bulkSubmit } = require("../src/talentaService");
@@ -21,8 +20,8 @@ app.post("/timesheet", async (req, res) => {
       holidays,
       annualLeave,
     } = req.body;
-
     const cookie = req.headers["cookie"];
+
     if (!cookie)
       return res.status(400).json({ error: "Missing Cookie header" });
     if (!fromDate || !toDate)
@@ -48,7 +47,13 @@ app.post("/timesheet", async (req, res) => {
   }
 });
 
-// 🔑 Export Express app as a Vercel serverless handler
-module.exports = (req, res) => {
-  app(req, res);
-};
+// ✅ For Vercel
+module.exports = (req, res) => app(req, res);
+
+// ✅ Start server locally if running directly
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Local server running at http://localhost:${PORT}`);
+  });
+}

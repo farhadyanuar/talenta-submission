@@ -22,11 +22,10 @@ app.post("/timesheet", async (req, res) => {
       annualLeave,
     } = req.body;
 
-    const cookie = req.headers["cookie"]; // required for Talenta API
+    const cookie = req.headers["cookie"];
     if (!cookie) {
       return res.status(400).json({ error: "Missing Cookie in headers" });
     }
-
     if (!fromDate || !toDate) {
       return res
         .status(400)
@@ -51,5 +50,4 @@ app.post("/timesheet", async (req, res) => {
   }
 });
 
-// Export handler for Vercel
 module.exports = app;

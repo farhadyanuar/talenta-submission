@@ -39,10 +39,10 @@ app.post("/timesheet", async (req, res) => {
 
     res.json({ success: true, results });
   } catch (err) {
-    console.error(err);
+    console.error("Error in /timesheet:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// ✅ Important: Vercel expects a handler, not app itself
+// ✅ For Vercel, wrap express into a handler
 module.exports = (req, res) => app(req, res);

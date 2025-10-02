@@ -15,7 +15,7 @@ const options = {
       },
     ],
   },
-  apis: ["./api/*.js"],
+  apis: ["./api/*.js"], // scan for @swagger comments
 };
 
 const specs = swaggerJsdoc(options);

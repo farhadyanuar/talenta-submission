@@ -1,6 +1,9 @@
-// /api/swagger.js
+// /api/docs.js
+import { serveFiles, setup } from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
+import express from "express";
 
+// Swagger spec
 const options = {
   definition: {
     openapi: "3.0.0",
@@ -15,12 +18,13 @@ const options = {
       },
     ],
   },
-  apis: ["./api/*.js"], // scan for @swagger comments
+  apis: ["./api/*.js"], // will read JSDoc comments in your routes
 };
 
 const specs = swaggerJsdoc(options);
 
-export default function handler(req, res) {
-  res.setHeader("Content-Type", "application/json");
-  res.status(200).json(specs);
-}
+// Create express app just for swagger
+const app = express();
+app.use("/", serveFiles(specs), setup(specs));
+
+export default app;

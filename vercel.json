@@ -1,6 +1,6 @@
 {
   "version": 2,
   "redirects": [
-    { "source": "/", "destination": "/api/swagger", "permanent": true }
+    { "source": "/", "destination": "/api/docs", "permanent": true }
   ]
 }

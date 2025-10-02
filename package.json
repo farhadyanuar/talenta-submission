@@ -3,7 +3,9 @@
     "axios": "^1.12.2",
     "dayjs": "^1.11.18",
     "express": "^5.1.0",
-    "serverless-http": "^4.0.0"
+    "serverless-http": "^4.0.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "name": "talenta-submission",
   "version": "1.0.0",

@@ -6,14 +6,16 @@ const talentaRoutes = require("./talenta");
 const app = express();
 app.use(express.json());
 
-// Swagger UI
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// Swagger UI route
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.use("/talenta", talentaRoutes);
-
-// Root
-app.get("/", (req, res) => {
+// Redirect /api → /api/docs
+app.get("/api", (req, res) => {
   res.redirect("/api/docs");
 });
 
+// Talenta routes
+app.use("/api/talenta", talentaRoutes);
+
+// Export Express app as a Vercel function
 module.exports = app;

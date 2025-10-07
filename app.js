@@ -9,12 +9,12 @@ const app = express();
 app.use(express.json());
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-app.use("/talenta", talentaRoutes);
 
 app.get("/", (req, res) => {
-  res.send("🚀 Talenta Submitter API is running. Visit /docs for Swagger UI.");
+  res.redirect("/api/docs");
 });
 
+app.use("/talenta", talentaRoutes);
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running at ${process.env.host}:${port}`);

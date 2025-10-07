@@ -8,8 +8,8 @@ const talentaRoutes = require("./api/talenta");
 const app = express();
 app.use(express.json());
 
-app.use("/", talentaRoutes);
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use("/talenta", talentaRoutes);
 
 app.get("/", (req, res) => {
   res.send("🚀 Talenta Submitter API is running. Visit /docs for Swagger UI.");

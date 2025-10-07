@@ -26,24 +26,24 @@ app.get("/api/docs", (req, res) => {
     <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js"></script>
     <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-standalone-preset.js"></script>
     <script>
-      window.onload = () => {
-        window.ui = SwaggerUIBundle({
-          url: '/api/swagger.json',
-          dom_id: '#swagger-ui',
-          presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
-          layout: "BaseLayout",
-          requestInterceptor: (req) => {
-            // 🧠 This automatically uses whatever was entered in "Authorize"
-            const auths = ui.authSelectors.authorized();
-            const cookieAuth = auths && auths.cookieAuth;
-            if (cookieAuth && cookieAuth.value) {
-              req.headers['Cookie'] = cookieAuth.value;
-            }
-            return req;
-          },
-        });
-      };
-    </script>
+window.onload = () => {
+  window.ui = SwaggerUIBundle({
+    url: '/api/swagger.json',
+    dom_id: '#swagger-ui',
+    presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+    layout: "BaseLayout",
+    requestInterceptor: (req) => {
+      const auths = window.ui.authSelectors.authorized();
+      const cookieAuth = auths && auths.cookieAuth;
+      if (cookieAuth && cookieAuth.value) {
+        req.headers['Cookie'] = cookieAuth.value.trim();
+      }
+      return req;
+    },
+  });
+};
+</script>
+
   </body>
   </html>`;
   res.send(swaggerHtml);

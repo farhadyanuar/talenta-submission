@@ -30,6 +30,7 @@ router.post("/bulkSubmit", async (req, res) => {
     } = req.body;
 
     const cookie = req.headers["cookie"];
+    console.log("Received Cookie:", req.headers["cookie"]);
     if (!cookie)
       return res.status(400).json({ error: "Missing Cookie in headers" });
     if (!fromDate || !toDate)

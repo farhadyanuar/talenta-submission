@@ -55,7 +55,7 @@ class talentaService {
         results.push({ date: dateStr, status: "skipped-weekend" });
       } else if (holidays.includes(dateStr)) {
         results.push(
-          await submitTalenta(
+          await this.submitTalenta(
             dateStr,
             startTime,
             endTime,
@@ -65,7 +65,7 @@ class talentaService {
         );
       } else if (annualLeave.includes(dateStr)) {
         results.push(
-          await submitTalenta(
+          await this.submitTalenta(
             dateStr,
             startTime,
             endTime,
@@ -75,7 +75,7 @@ class talentaService {
         );
       } else {
         results.push(
-          await submitTalenta(dateStr, startTime, endTime, taskId, cookie)
+          await this.submitTalenta(dateStr, startTime, endTime, taskId, cookie)
         );
       }
 

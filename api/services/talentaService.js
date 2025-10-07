@@ -30,6 +30,7 @@ class talentaService {
       );
       return { date, success: true, data: response.data };
     } catch (err) {
+      console.log(err.response?.data || err.message);
       return { date, success: false, error: err.message };
     }
   }

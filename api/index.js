@@ -27,34 +27,21 @@ app.get("/api/docs", (req, res) => {
     <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-standalone-preset.js"></script>
     <script>
       window.onload = () => {
-        const ui = SwaggerUIBundle({
+        window.ui = SwaggerUIBundle({
           url: '/api/swagger.json',
           dom_id: '#swagger-ui',
           presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
           layout: "BaseLayout",
-
-          // 👇 Intercept every request and inject the cookie dynamically
           requestInterceptor: (req) => {
-            const cookieInput = window.localCookie; // read from user input
-            if (cookieInput && cookieInput.trim()) {
-              req.headers['Cookie'] = cookieInput.trim();
+            // 🧠 This automatically uses whatever was entered in "Authorize"
+            const auths = ui.authSelectors.authorized();
+            const cookieAuth = auths && auths.cookieAuth;
+            if (cookieAuth && cookieAuth.value) {
+              req.headers['Cookie'] = cookieAuth.value;
             }
             return req;
           },
         });
-
-        // 🔥 Simple input UI to let user set cookie temporarily
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.placeholder = 'Paste your Talenta cookie here (PHPSESSID=...)';
-        input.style = 'width: 100%; padding: 10px; font-size: 14px; margin: 10px 0;';
-        input.onchange = (e) => {
-          window.localCookie = e.target.value;
-          alert('✅ Cookie applied for this Swagger session');
-        };
-
-        const swaggerEl = document.getElementById('swagger-ui');
-        swaggerEl.parentNode.insertBefore(input, swaggerEl);
       };
     </script>
   </body>

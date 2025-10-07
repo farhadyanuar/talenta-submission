@@ -1,6 +1,7 @@
 const express = require("express");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
+require("dotenv").config();
 
 const talentaRoutes = require("./api/talenta");
 

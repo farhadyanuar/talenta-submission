@@ -1,5 +1,5 @@
 const express = require("express");
-const TalentaService = require("../services/talentaService");
+const TalentaService = require("./services/talentaService");
 const router = express.Router();
 
 /**

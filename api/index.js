@@ -1,21 +1,33 @@
 const express = require("express");
 const swaggerUi = require("swagger-ui-express");
-const swaggerDocument = require("../swagger.json");
+const fs = require("fs");
+const path = require("path");
 const talentaRoutes = require("./talenta");
 
 const app = express();
 app.use(express.json());
 
-// Swagger UI route
-app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// ✅ Load Swagger JSON safely
+const swaggerPath = path.join(__dirname, "../swagger.json");
+const swaggerDocument = JSON.parse(fs.readFileSync(swaggerPath, "utf8"));
 
-// Redirect /api → /api/docs
-app.get("/api", (req, res) => {
-  res.redirect("/api/docs");
-});
+// ✅ Serve Swagger UI correctly on Vercel
+app.use(
+  "/api/docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, {
+    explorer: true,
+    customCssUrl: "https://unpkg.com/swagger-ui-dist/swagger-ui.css",
+    customJs: "https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js",
+    customJs2:
+      "https://unpkg.com/swagger-ui-dist/swagger-ui-standalone-preset.js",
+  })
+);
 
-// Talenta routes
+// ✅ Redirect `/` → `/api/docs`
+app.get("/", (req, res) => res.redirect("/api/docs"));
+
+// ✅ Talenta routes
 app.use("/api/talenta", talentaRoutes);
 
-// Export Express app as a Vercel function
 module.exports = app;

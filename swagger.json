@@ -2,14 +2,39 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Talenta Submitter API",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Automated bulk submission of Talenta timesheets with support for holidays and annual leave."
   },
-  "servers": [{ "url": "/" }],
+  "servers": [
+    {
+      "url": "/api",
+      "description": "Base API path"
+    }
+  ],
+  "components": {
+    "parameters": {
+      "CookieHeader": {
+        "name": "Cookie",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Paste your Talenta session cookie here (e.g., PHPSESSID=...)."
+      }
+    }
+  },
   "paths": {
-    "/bulkSubmit": {
+    "/talenta/bulkSubmit": {
       "post": {
         "tags": ["Talenta Service"],
-        "summary": "Bulk submit Talenta timesheet",
+        "summary": "Bulk submit Talenta timesheet entries",
+        "description": "Submits attendance tasks between the given dates. Automatically skips weekends and uses special task IDs for holidays and annual leave.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/CookieHeader"
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -17,9 +42,41 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "fromDate": { "type": "string" },
-                  "toDate": { "type": "string" },
-                  "taskId": { "type": "integer" }
+                  "fromDate": {
+                    "type": "string",
+                    "example": "2025-10-02"
+                  },
+                  "toDate": {
+                    "type": "string",
+                    "example": "2025-10-02"
+                  },
+                  "startTime": {
+                    "type": "string",
+                    "example": "09:00:00"
+                  },
+                  "endTime": {
+                    "type": "string",
+                    "example": "17:00:00"
+                  },
+                  "taskId": {
+                    "type": "integer",
+                    "example": 127520,
+                    "description": "Example: Maintenance = 127520, Medistra = 492289"
+                  },
+                  "holidays": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": ["2025-10-01"]
+                  },
+                  "annualLeave": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": ["2025-10-01"]
+                  }
                 },
                 "required": ["fromDate", "toDate"]
               }
@@ -28,7 +85,13 @@
         },
         "responses": {
           "200": {
-            "description": "Bulk submission results"
+            "description": "Bulk submission result (per day status)"
+          },
+          "400": {
+            "description": "Missing cookie or invalid body parameters"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }

@@ -12,29 +12,26 @@
     }
   ],
   "components": {
-    "parameters": {
-      "CookieHeader": {
-        "name": "Cookie",
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
         "in": "header",
-        "required": true,
-        "schema": {
-          "type": "string"
-        },
-        "description": "Paste your Talenta session cookie here (e.g., PHPSESSID=...)."
+        "name": "Cookie",
+        "description": "Paste your Talenta session cookie here (e.g., PHPSESSID=your_value)"
       }
     }
   },
+  "security": [
+    {
+      "cookieAuth": []
+    }
+  ],
   "paths": {
     "/talenta/bulkSubmit": {
       "post": {
         "tags": ["Talenta Service"],
         "summary": "Bulk submit Talenta timesheet entries",
         "description": "Submits attendance tasks between the given dates. Automatically skips weekends and uses special task IDs for holidays and annual leave.",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/CookieHeader"
-          }
-        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -65,34 +62,24 @@
                   },
                   "holidays": {
                     "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
+                    "items": { "type": "string" },
                     "example": ["2025-10-01"]
                   },
                   "annualLeave": {
                     "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
+                    "items": { "type": "string" },
                     "example": ["2025-10-01"]
                   }
                 },
-                "required": ["fromDate", "toDate"]
+                "required": ["fromDate", "toDate", "startTime", "endTime", "taskId"]
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Bulk submission result (per day status)"
-          },
-          "400": {
-            "description": "Missing cookie or invalid body parameters"
-          },
-          "500": {
-            "description": "Internal server error"
-          }
+          "200": { "description": "Bulk submission result (per day status)" },
+          "400": { "description": "Missing cookie or invalid body parameters" },
+          "500": { "description": "Internal server error" }
         }
       }
     }

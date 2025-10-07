@@ -1,0 +1,63 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Talenta Submitter API",
+    "version": "1.0.0",
+    "description": "API for submitting Talenta tasks in bulk."
+  },
+  "servers": [{ "url": "/" }],
+  "tags": [
+    {
+      "name": "Talenta Service",
+      "description": "Endpoints for interacting with Talenta submission system"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Cookie",
+        "description": "Paste your Talenta cookie here (e.g. `PHPSESSID=...`)"
+      }
+    }
+  },
+  "security": [{ "cookieAuth": [] }],
+  "paths": {
+    "/bulkSubmit": {
+      "post": {
+        "tags": ["Talenta Service"],
+        "summary": "Bulk submit Talenta tasks",
+        "description": "Submits attendance tasks in bulk within a date range.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fromDate": { "type": "string" },
+                  "toDate": { "type": "string" },
+                  "startTime": { "type": "string" },
+                  "endTime": { "type": "string" },
+                  "taskId": { "type": "integer" },
+                  "holidays": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  },
+                  "annualLeave": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Bulk submission results" }
+        }
+      }
+    }
+  }
+}

@@ -14,7 +14,9 @@
     "nodemon": "^3.1.10"
   },
   "scripts": {
-    "dev": "nodemon api/swagger.js"
+    "dev": "nodemon api/index.js",
+    "start": "node api/index.js",
+    "vercel": "vercel dev"
   },
   "keywords": [],
   "author": "",

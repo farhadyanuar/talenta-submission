@@ -6,18 +6,26 @@ dayjs.extend(isSameOrBefore);
 
 const taskIdPublicHoliday = 127597;
 const taskIdAnnualLeave = 127673;
+const TALENTA_URL = process.env.TALENTA_URL;
 
 class talentaService {
-  static async submitTalenta(date, startTime, endTime, taskId, cookie) {
+  static async submitTalenta({
+    date,
+    startTime,
+    endTime,
+    taskId,
+    cookie,
+    activity = "",
+  }) {
     const startDateTime = `${date} ${startTime}`;
     const endDateTime = `${date} ${endTime}`;
 
     try {
       const response = await axios.post(
-        "https://hr.talenta.co/api/web/time-sheet/store",
+        `${TALENTA_URL}/web/time-sheet/store`,
         {
-          task_id: taskId,
-          activity: "",
+          taskId,
+          activity,
           start_time: startDateTime,
           end_time: endDateTime,
         },
@@ -40,6 +48,7 @@ class talentaService {
     startTime,
     endTime,
     taskId,
+    activity = "",
     holidays = [],
     annualLeave = [],
     cookie,
@@ -56,27 +65,36 @@ class talentaService {
         results.push({ date: dateStr, status: "skipped-weekend" });
       } else if (holidays.includes(dateStr)) {
         results.push(
-          await this.submitTalenta(
+          await this.submitTalenta({
             dateStr,
             startTime,
             endTime,
             taskIdPublicHoliday,
-            cookie
-          )
+            cookie,
+            activity,
+          })
         );
       } else if (annualLeave.includes(dateStr)) {
         results.push(
-          await this.submitTalenta(
+          await this.submitTalenta({
             dateStr,
             startTime,
             endTime,
             taskIdAnnualLeave,
-            cookie
-          )
+            cookie,
+            activity,
+          })
         );
       } else {
         results.push(
-          await this.submitTalenta(dateStr, startTime, endTime, taskId, cookie)
+          await this.submitTalenta({
+            date: dateStr,
+            startTime,
+            endTime,
+            taskId,
+            cookie,
+            activity,
+          })
         );
       }
 
@@ -85,6 +103,24 @@ class talentaService {
 
     return results;
   }
-};
+
+  static async getTaskList(cookie) {
+    try {
+      const response = await axios.get(
+        `${TALENTA_URL}/web/time-sheet/task-list`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: cookie,
+          },
+        }
+      );
+      return response?.data?.data || [];
+    } catch (err) {
+      console.log(err.response?.data || err.message);
+      return { success: false, error: err.message };
+    }
+  }
+}
 
 module.exports = talentaService;

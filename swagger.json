@@ -13,21 +13,21 @@
   ],
   "components": {
     "securitySchemes": {
-      "cookieAuth": {
+      "tokenAuth": {
         "type": "apiKey",
         "in": "header",
-        "name": "Cookie",
+        "name": "Token",
         "description": "Paste your Talenta session cookie here (e.g., PHPSESSID=your_value)"
       }
     }
   },
   "security": [
     {
-      "cookieAuth": []
+      "tokenAuth": []
     }
   ],
   "paths": {
-    "/talenta/bulkSubmit": {
+    "/talenta/bulk-submit": {
       "post": {
         "tags": ["Talenta Service"],
         "summary": "Bulk submit Talenta timesheet entries",
@@ -51,6 +51,10 @@
                     "type": "string",
                     "example": "09:00:00"
                   },
+                  "activity": {
+                    "type": "string",
+                    "example": "Meeting with client"
+                  },
                   "endTime": {
                     "type": "string",
                     "example": "17:00:00"
@@ -71,13 +75,31 @@
                     "example": ["2025-10-01"]
                   }
                 },
-                "required": ["fromDate", "toDate", "startTime", "endTime", "taskId"]
+                "required": [
+                  "fromDate",
+                  "toDate",
+                  "startTime",
+                  "endTime",
+                  "taskId"
+                ]
               }
             }
           }
         },
         "responses": {
           "200": { "description": "Bulk submission result (per day status)" },
+          "400": { "description": "Missing cookie or invalid body parameters" },
+          "500": { "description": "Internal server error" }
+        }
+      }
+    },
+    "/talenta/get-task-list": {
+      "get": {
+        "tags": ["Talenta Service"],
+        "summary": "Get Talenta Task List",
+        "description": "Retrieves the list of tasks from Talenta.",
+        "responses": {
+          "200": { "description": "List of tasks retrieved successfully" },
           "400": { "description": "Missing cookie or invalid body parameters" },
           "500": { "description": "Internal server error" }
         }

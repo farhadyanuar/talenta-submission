@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
@@ -26,23 +28,40 @@ app.get("/api/docs", (req, res) => {
     <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js"></script>
     <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-standalone-preset.js"></script>
     <script>
-window.onload = () => {
-  window.ui = SwaggerUIBundle({
-    url: '/api/swagger.json',
-    dom_id: '#swagger-ui',
-    presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
-    layout: "BaseLayout",
-    requestInterceptor: (req) => {
-      const auths = window.ui.authSelectors.authorized();
-      const cookieAuth = auths && auths.cookieAuth;
-      if (cookieAuth && cookieAuth.value) {
-        req.headers['Cookie'] = cookieAuth.value.trim();
-      }
-      return req;
-    },
-  });
-};
-</script>
+      window.onload = () => {
+        let ui; // Declare first
+
+        ui = SwaggerUIBundle({
+          url: '/api/swagger.json',
+          dom_id: '#swagger-ui',
+          presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+          layout: "BaseLayout",
+
+          requestInterceptor: (req) => {
+            // ✅ ui may not be ready at first, so guard it
+            try {
+              const state = ui?.getState?.().toJS?.();
+              const auths = state?.auth?.authorized;
+              console.log(auths, 'ini auths dr interceptor')
+              console.log(auths?.tokenAuth?.value, 'ini token dr interceptor')
+              if (auths?.tokenAuth?.value) {
+                const token = auths.tokenAuth.value.trim();
+                req.headers['Token'] = token;
+              }
+            } catch (e) {
+              console.warn('Interceptor error:', e);
+            }
+            return req;
+          },
+          request: (req) => {
+            req.credentials = 'include';
+            return req;
+          }
+        });
+
+        window.ui = ui; // Keep reference globally
+      };
+    </script>
 
   </body>
   </html>`;
